@@ -1,10 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ParallelDb.Data.Entities
 {
     public class Element : EntityBase
     {
-        public ICollection<DepElement> DepElements { get; set; }
+        public virtual ICollection<DepElement> DepElements { get; set; }
+        public Element() : base(){}
+        private Element(Random r) : base(r) {}
+        public static Element CreateInstance(Random r)=> new(r);
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 
@@ -6,15 +7,28 @@ namespace ParallelDb.Data.Entities
 {
     public class DepElement : EntityBase
     {
-        [ForeignKey("Element")]
         public int? ElementId { get; set; }
+       // [ForeignKey("Element")]
         public Element Element { get; set; }
+        
+        public DepElement() : base() { }
+        private DepElement(Random r) : base(r) { }
 
-        public DepElement() { }
-        public DepElement(IEnumerable<Element> elements) : base(true)
+        public static DepElement CreateInstance(Random r, IList<int> elementIds)
         {
-            if (R.Next(0, 3) > 0)
-                ElementId = elements?.Select(e => e.Id).Shuffle(R).FirstOrDefault();
+            DepElement res = new(r);
+            if (elementIds is not null)
+            {
+                if (res.R.Next(0, 3) > 0)
+                {
+                    var id = elementIds[r.Next(elementIds.Count)];
+                    if (id != 0)
+                        res.ElementId = id;
+                    else throw new NullReferenceException();
+                }
+                return res;
+            }
+            throw new NullReferenceException("Elements is null");
         }
     }
 }

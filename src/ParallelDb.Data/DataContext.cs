@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using ParallelDb.Data.Entities;
 
 namespace ParallelDb.Data
@@ -15,10 +16,17 @@ namespace ParallelDb.Data
             optionsBuilder.UseSqlServer(@"Data Source=(local)\SQLEXPRESS; Database=ParallelDB; Persist Security Info=false; User ID='sa'; Password='sa'; MultipleActiveResultSets=True; Trusted_Connection=False;");
         }
 
-        public async void Truncate()
+        public void TruncateAsync()
         {
-            await Database.ExecuteSqlRawAsync($"TRUNCATE TABLE {nameof(DepElements)}");
-            await Database.ExecuteSqlRawAsync($"TRUNCATE TABLE {nameof(Elements)}");
+            string de = nameof(DepElements), 
+                e = nameof(Elements),
+                eid = nameof(DepElement.ElementId),
+                fk = $"FK_{de}_{e}_{eid}";
+            Database.ExecuteSqlRaw($"ALTER TABLE {de} DROP CONSTRAINT {fk}");
+            Database.ExecuteSqlRaw($"TRUNCATE TABLE {de}");
+            Database.ExecuteSqlRaw($"TRUNCATE TABLE {e}");
+            Database.ExecuteSqlRaw($"ALTER TABLE {de} WITH CHECK ADD CONSTRAINT {fk} FOREIGN KEY({eid}) REFERENCES {e}({nameof(Element.Id)})");
+            Database.ExecuteSqlRaw($"ALTER TABLE {de} CHECK CONSTRAINT {fk}");
         }
     }
 }

@@ -10,7 +10,7 @@ using ParallelDb.Data;
 namespace ParallelDb.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20210427111407_CreateDB")]
+    [Migration("20210428090758_CreateDB")]
     partial class CreateDB
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -32,7 +32,6 @@ namespace ParallelDb.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("Number")
@@ -53,7 +52,6 @@ namespace ParallelDb.Data.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("Number")

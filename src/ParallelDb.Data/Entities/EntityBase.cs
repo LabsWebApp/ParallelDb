@@ -8,26 +8,25 @@ namespace ParallelDb.Data.Entities
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; init; }
-
-        [Required]
         public string Name { get; set; }
         public int? Number { get; set; }
-
-        internal Random R { get; init; }
-        public void SetRandom()
+        
+        [NotMapped]
+        protected Random R { get; set; }
+        private void SetRandom()
         {
-            Name = R.Next(1000, 10000).ToString();
-            if (R.Next(0, 2) > 0)
+            if (R.Next(0, 4) > 0)
+                Name = R.Next(1000, 10000).ToString();
+            if (Name is null || R.Next(0, 2) > 0)
                 Number = R.Next();
         }
 
-        internal EntityBase(bool first = false)
+        protected EntityBase(Random r)
         {
-            if (first)
-            {
-                R = new Random(DateTime.Now.Millisecond);
-                SetRandom();
-            }
+            R = r ?? throw new NullReferenceException("r is null");
+            SetRandom();
         }
+
+        protected EntityBase() { }
     }
 }
