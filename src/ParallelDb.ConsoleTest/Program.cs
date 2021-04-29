@@ -47,7 +47,7 @@ namespace ParallelDb.ConsoleTest
                 if(db.DepElements.Any())
                     id = db.DepElements.AsQueryable().Max(d => d.Id);
 
-                for (int j = 0; j < 10; j++)
+                for (int j = 0; j < 100; j++)
                 {
                     for (int i = 1; i < 100001; i++)
                     {
@@ -65,13 +65,15 @@ namespace ParallelDb.ConsoleTest
                         (
                             conn,
                             SqlBulkCopyOptions.TableLock |
-                            SqlBulkCopyOptions.FireTriggers |
+                           // SqlBulkCopyOptions.FireTriggers |
                             SqlBulkCopyOptions.UseInternalTransaction,
                             null
                         ) {DestinationTableName = depElements.TableName};
                     conn?.Open();
                     bulkCopy.WriteToServer(depElements);
                     conn?.Close();
+                    WriteLine(db.DepElements.Count());
+                    depElements.Clear();
                 }
             }
             WriteLine("OK");
