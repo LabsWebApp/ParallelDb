@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Data;
-using System.Diagnostics;
 using System.Linq;
 using static System.Console;
-using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using ParallelDb.Data;
@@ -19,11 +17,11 @@ namespace ParallelDb.ConsoleTest
             
             var db = new DataContext();
             //очищаем таблицу
-            db.TruncateAsync();
+            db.Truncate();
 
-            for (int i = 0; i < 100; i++)
+            for (int i = 0; i < 100000; i++)
                 db.Elements.Add(Element.CreateInstance(r));
-            db.SaveChanges();
+            WriteLine($"Записали строк {db.SaveChanges()} в {nameof(db.Elements)}");
 
             var list = db.Elements.Select(e => e.Id).ToList();
             using (SqlConnection conn = db.Database.GetDbConnection() as SqlConnection)
@@ -47,7 +45,7 @@ namespace ParallelDb.ConsoleTest
                 if(db.DepElements.Any())
                     id = db.DepElements.AsQueryable().Max(d => d.Id);
 
-                for (int j = 0; j < 10; j++)
+                for (int j = 0; j < 100; j++)
                 {
                     for (int i = 1; i < 100001; i++)
                     {
@@ -72,6 +70,8 @@ namespace ParallelDb.ConsoleTest
                     conn?.Open();
                     bulkCopy.WriteToServer(depElements);
                     conn?.Close();
+                    WriteLine($"записали строк: {(j + 1) * 100000} в {nameof(db.DepElements)}");
+                    depElements.Clear();
                 }
             }
             WriteLine("OK");

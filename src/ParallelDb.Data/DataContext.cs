@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using ParallelDb.Data.Entities;
 
 namespace ParallelDb.Data
@@ -16,7 +15,7 @@ namespace ParallelDb.Data
             optionsBuilder.UseSqlServer(@"Data Source=(local)\SQLEXPRESS; Database=ParallelDB; Persist Security Info=false; User ID='sa'; Password='sa'; MultipleActiveResultSets=True; Trusted_Connection=False;");
         }
 
-        public void TruncateAsync()
+        public void Truncate()
         {
             string de = nameof(DepElements), 
                 e = nameof(Elements),
